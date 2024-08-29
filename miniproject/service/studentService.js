@@ -2,10 +2,10 @@
 const fs = require('fs').promises; // Sử dụng fs.promises để có hàm async
 const { get } = require('https');
 const path = require('path');
+let pathStudentJson = "../dao/student.json"
 
-// Điều chỉnh đường dẫn đến tệp JSON nếu cần
 async function getStudent() {
-    const jsonFilePath = path.join(__dirname, 'student.json');
+    const jsonFilePath = path.join(__dirname, pathStudentJson);
 
     try {
         const data = await fs.readFile(jsonFilePath, 'utf8');
@@ -13,7 +13,7 @@ async function getStudent() {
         return jsonData;
     } catch (err) {
         console.error('Error reading or parsing file:', err);
-        throw err; // Ném lỗi để xử lý ở nơi gọi hàm
+        throw err;
     }
 }
 async function addStudent(student){
@@ -21,7 +21,7 @@ async function addStudent(student){
     arrayStudent.push(student); 
 
     await fs.writeFile(
-        "student.json",
+        pathStudentJson,
         JSON.stringify(arrayStudent),
         err => {
             if (err) throw err;
@@ -34,7 +34,7 @@ async function deleteStudentByName(name) {
         let arrayStudent = await getStudent();
         const updatedStudents = arrayStudent.filter(student => student.name !== name);
         await fs.writeFile(
-            'student.json',
+            pathStudentJson,
             JSON.stringify(updatedStudents, null, 2),
             'utf8'
         );

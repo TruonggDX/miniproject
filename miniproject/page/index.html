@@ -10,7 +10,7 @@
 </head>
 <body>
   
-    <div class="page-wrapper chiller-theme toggled">
+    <div class="page-wrapper chiller-theme toggled">    
       <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
         <i class="fas fa-bars"></i>
       </a>
@@ -144,40 +144,21 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="../js/scrpit.js"></script>
- 
-  <script>
-    function get(path, params = {}){
-      var myHeaders = new Headers();
-      myHeaders.append("Content-Type","application/json");
-      const paramUrl = new URLSearchParams(params)
-      return fetch(`${path}?${paramUrl}`,{
-          method: 'GET',
-          header: myHeaders,
-      }).then(response => response.json())
-    }
+    <script src="../js/script.js"></script>
+    <script src="../js/formToObj.js"></script>
 
-   
-
+    <script>
     document.getElementById('saveStudent').addEventListener('click', async function() {
-      const name = document.querySelector('input[name="name"]').value;
-      const gender = document.querySelector('select[name="gender"]').value;
-      const price = document.querySelector('input[name="price"]').value;
-      const status = document.querySelector('select[name="status"]').value;
-      const dob = document.querySelector('input[name="dob"]').value;
-      const address = document.querySelector('input[name="address"]').value;
-
-      const student = {name, gender, price, status, dob, address };
-
+      let formValue =formToObject("#studentForm")
       try {
           const response = await fetch('http://localhost:3000/addStudent', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
               },
-              body: JSON.stringify(student)
+              body: JSON.stringify(formValue)
           });
-
+      
           if (response.ok) {
               alert('Sinh viên đã được thêm thành công!');
               $('#exampleModal').modal('hide');
@@ -185,7 +166,7 @@
               alert('Có lỗi xảy ra khi thêm sinh viên.');
           }
       } catch (error) {
-          console.error(error); 
+          console.error(error);
       }
     });
 
@@ -200,11 +181,7 @@
       for (let i = 0; i < data.length; i++) {
         let student = data[i];
         let date = new Date(student.dob);
-        let formattedDob = date.toLocaleDateString('vi-VN', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric'
-        });
+        let formattedDob = formatDate(date)
         console.log('data', student);
         let row = `<tr>
           <th scope="row">${i + 1}</th>
@@ -215,11 +192,11 @@
           <td>${formattedDob}</td>
           <td>${student.address}</td>
           <td>
-            <a href="http://localhost:3000/about" type="button" class="btn btn-primary btn-sm">
+            <a href="detail_student.html" type="button" class="btn btn-primary btn-sm">
               <i class="fas fa-edit"></i> Chi tiết
             </a>
             
-            <button type="button" class="btn btn-danger btn-sm" data-name="${student.name}" id="deleteStudent">
+            <button type="button" class="btn btn-danger btn-sm" data-name="${student.name}" onclick="deleteStudent('${student.name}')" id="deleteStudent">
                 <i class="fas fa-trash-alt"></i> Xóa
             </button>
         
@@ -230,29 +207,22 @@
     })
     .catch(error => console.error('Error fetching JSON:', error));
 
-    function formatCurrency(amount) {
-      return new Intl.NumberFormat('vi-VN', {style: 'currency', currency: 'VND'}).format(amount);
-  }
-
-  $(document).on('click', '#deleteStudent', async function (event) {
-    event.preventDefault();
-    const studentName = $(this).data('name');
-    try {
-        const response = await fetch(`http://localhost:3000/delete/${(studentName)}`, {
-            method: 'DELETE'
+    async function deleteStudent(name){
+      try {
+        const response = await fetch(`http://localhost:3000/delete/${name}`, {
+          method: 'DELETE'
         });
 
         if (response.ok) {
-            alert('Xóa thành công!');
+          alert('Xóa thành công!');
         } else {
-            alert('Có lỗi xảy ra khi xóa sinh viên.');
+          alert('Có lỗi xảy ra khi xóa sinh viên.');
         }
-    } catch (error) {
+      } catch (error) {
         console.error(error);
         alert('Có lỗi xảy ra khi xóa sinh viên.');
+      }
     }
-});
-
 
  
    
