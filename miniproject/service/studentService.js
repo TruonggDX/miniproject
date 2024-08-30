@@ -61,5 +61,22 @@ async function exportExcel(){
         console.error('Lỗi khi xuất Excel:', error);
     }
 }
+async function updateStudent(newStudent) {
+    let arrayStudent = await getStudent(); 
+    const index = arrayStudent.findIndex(obj => obj.id === newStudent.id);
 
-module.exports = { getStudent, addStudent,deleteStudentById,exportExcel};
+    if (index !== -1) {
+        arrayStudent[index] = newStudent;
+
+        await fs.writeFile(
+            pathStudentJson,
+            JSON.stringify(arrayStudent, null, 2) 
+        );
+        console.log("Đã cập nhật thành công");
+    } else {
+        console.error('Sinh viên không tồn tại');
+        throw new Error('Sinh viên không tồn tại');
+    }
+}   
+
+module.exports = { getStudent, addStudent,deleteStudentById,exportExcel,updateStudent};

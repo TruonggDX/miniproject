@@ -196,7 +196,7 @@
           <td>${formattedDob}</td>
           <td>${student.address}</td>
           <td>
-            <a href="detail_student.html" type="button" class="btn btn-primary btn-sm">
+            <a href="detail_student.html?student=${ encodeURIComponent(JSON.stringify(student))}" type="button" class="btn btn-primary btn-sm">
               <i class="fas fa-edit"></i> Chi tiết
             </a>
             

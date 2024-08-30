@@ -1,20 +1,20 @@
 [
   {
     "id": 1,
-    "name": "Đỗ Thị Hồng",
-    "gender": "Nữ",
-    "price": "2700000",
+    "name": "Đỗ Thị Hồngq11",
+    "price": 2700000,
     "status": "Đã hoàn thành",
     "dob": "2003-11-15",
-    "address": "Ninh Bình"
+    "address": "Ninh Bình111",
+    "gender": "Nam"
   },
   {
-    "name": "Đỗ Thị Hồng",
     "id": 3,
-    "price": "45645",
+    "name": "Đỗ Thị Hồng",
+    "price": 0,
+    "status": "Đã hoàn thành",
     "dob": "2024-07-31",
     "address": "ewrerw",
-    "gender": "Nam",
-    "status": "Đã hoàn thành"
+    "gender": "Nữ"
   }
 ]
