@@ -2,12 +2,12 @@
   {
     "id": 7,
     "name": "nhat minh",
-    "gender": "Nam",
     "price": 1700000,
     "status": "Chưa hoàn thành",
-    "paymentDate": "2024-07-11",
-    "dob": "2003-1-15",
-    "address": "Đan Phương"
+    "date": "",
+    "dob": "",
+    "address": "Đan Phương",
+    "gender": "Nam"
   },
   {
     "id": 6,
@@ -50,13 +50,13 @@
     "status": "Đã hoàn thành"
   },
   {
-    "id": 1,
-    "name": "demo",
+    "id": 2,
+    "name": "user",
+    "price": 342342,
+    "paymentDate": "2024-08-04",
+    "dob": "2024-07-30",
+    "address": "fsdfs",
     "gender": "Nam",
-    "price": 2700000,
-    "status": "Đã hoàn thành",
-    "paymentDate": "2024-07-21",
-    "dob": "2003-11-15",
-    "address": "Đan Phương"
+    "status": "Đã hoàn thành"
   }
 ]

@@ -24,13 +24,12 @@ async function getPaymentDeadline(fee_id) {
 async function addPaymentDeadline(paymentDeadline, fee_id) {
     const jsonFilePath = path.join(__dirname, pathJson);
     let arrayPaymentDeadline;
-    const existingData = await getPaymentDeadline(fee_id);
+    const existingData = await getAll();
     if (existingData !== null) {
         arrayPaymentDeadline = existingData;
     } else {
         arrayPaymentDeadline = [];
     }
-
     arrayPaymentDeadline.push(paymentDeadline);
 
     try {
@@ -58,7 +57,7 @@ async function deletePaymentDeadlineById(id) {
 }
 
 async function updatePaymentDeadline(newpaymentDeadline) {
-    let arraypaymentDeadline = await getPaymentDeadline(); 
+    let arraypaymentDeadline = await getAll(); 
     const index = arraypaymentDeadline.findIndex(obj => obj.id === newpaymentDeadline.id);
 
     if (index !== -1) {
@@ -75,5 +74,19 @@ async function updatePaymentDeadline(newpaymentDeadline) {
         throw new Error('Sinh viên không tồn tại');
     }
 }   
+async function getAll() {
+    const jsonFilePath = path.join(__dirname, pathJson);
 
+    try {
+        const data = await fs.readFile(jsonFilePath, 'utf8');
+        if(data != ""){
+        const jsonData = JSON.parse(data);
+        return jsonData;
+        }
+        return null;
+    } catch (err) {
+        console.error('Error reading or parsing file:', err);
+        throw err;
+    }
+}
 module.exports = { getPaymentDeadline, addPaymentDeadline,deletePaymentDeadlineById,updatePaymentDeadline};
