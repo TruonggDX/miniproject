@@ -2,8 +2,9 @@
   {
     "id": 1,
     "name": "1",
-    "price": null,
-    "fee_id": 1
+    "price": 32467,
+    "fee_id": 1,
+    "deadline": "2024-08-18"
   },
   {
     "name": "2",
@@ -17,13 +18,6 @@
     "name": "3",
     "price": 342342,
     "deadline": "2024-08-21",
-    "fee_id": 1
-  },
-  {
-    "id": 4,
-    "name": "5",
-    "price": 342342,
-    "deadline": "2024-08-13",
     "fee_id": 1
   }
 ]

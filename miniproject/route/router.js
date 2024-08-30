@@ -6,7 +6,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { getStudent,addStudent,deleteStudentById,exportExcel,importData , updateStudent } = require('../service/studentService.js');
+const { getStudent,addStudent,deleteStudentById,exportExcel,importData , updateStudent,searchStudentByName } = require('../service/studentService.js');
 const { getFee,addFee, deleteFee , updateFee} = require('../service/feeService.js');
 const { getPaymentDeadline, addPaymentDeadline,deletePaymentDeadlineById,updatePaymentDeadline } = require('../service/paymentDeadline.js');
 
@@ -21,12 +21,13 @@ app.use(bodyParser.json());
 
 app.get('/', async (req, res) => {
     try {
-        const message = await getStudent(); 
-        res.json(message);
+        const students = await getStudent(); 
+        res.json(students);
     } catch (error) {
-        res.status(500).send('Error reading JSON data');
+        res.status(500).send('Lỗi khi đọc dữ liệu JSON');
     }
 });
+
 app.delete('/deleteStudentById/:id', async (req, res) => {
     try {
         const studentId = req.params.id;
@@ -84,6 +85,38 @@ app.post('/read', upload.single('file'), async (req, res) => {
         res.status(200).json('import thành công');
     } catch (error) {
         console.error('Error:', error);
+    }
+});
+
+app.get('/findByName/:name', async (req, res) => {
+    try {
+        const studentName = req.params.name;
+        const listStudent = await searchStudentByName(studentName);
+
+        if (listStudent.length > 0) {
+            res.status(200).json(listStudent);
+        } else {
+            res.status(404).send('Không tìm thấy sinh viên có tên này.');
+        }
+    } catch (error) {
+        console.error('Lỗi:', error);
+        res.status(500).send('Lỗi khi tìm kiếm sinh viên.');
+    }
+});
+
+
+app.get('/findStudentByDate/:date', async (req, res) => {
+    try {
+        const paymentDate = req.params.date; // nhận ngày dưới dạng yyyy-mm-dd
+        const listStudent = await searchStudentByDate(paymentDate);
+
+        if (listStudent.length > 0) {
+            res.status(200).json(listStudent);
+        } else {
+            res.status(404).send('Không tìm thấy sinh viên có ngày nộp tiền này.');
+        }
+    } catch (error) {
+        res.status(500).send('Có lỗi xảy ra khi tìm kiếm.');
     }
 });
 

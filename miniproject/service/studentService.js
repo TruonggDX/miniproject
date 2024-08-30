@@ -9,18 +9,37 @@ let pathStudentJson = "../dao/student.json"
 const upload = multer({ dest: 'uploads/' });
 
 
+
 async function getStudent() {
     const jsonFilePath = path.join(__dirname, pathStudentJson);
 
     try {
         const data = await fs.readFile(jsonFilePath, 'utf8');
         const jsonData = JSON.parse(data);
+
+    
+        jsonData.sort((a, b) => {
+            if (a.status !== b.status) {
+                return a.status === "Chưa hoàn thành" ? -1 : 1;
+            }
+            if (a.price !== b.price) {
+                return a.price - b.price;
+            }
+            if (a.paymentDate !== b.paymentDate) {
+                return new Date(a.paymentDate) - new Date(b.paymentDate); 
+            }
+
+            return 0;
+        });
+
         return jsonData;
     } catch (err) {
         console.error('Error reading or parsing file:', err);
         throw err;
     }
 }
+
+
 async function addStudent(student){
     let arrayStudent = await getStudent(); 
     arrayStudent.push(student); 
@@ -111,4 +130,44 @@ async function importData(filePath) {
         throw error;
     }
 }
-module.exports = { getStudent, addStudent,deleteStudentById,exportExcel,importExcel,importData,updateStudent};
+async function searchStudentByName(name) {
+    try {
+        let arrayStudent = await getStudent(); 
+
+        const listStudent = arrayStudent.filter(student => {
+            const matchesName = student.name.toLowerCase().includes(name.toLowerCase());
+            const matchesDate = date ? student.paymentDate === date : true; 
+            return matchesName && matchesDate;
+        });
+
+        return listStudent;
+    } catch (error) {
+        console.error('Lỗi khi tìm kiếm sinh viên:', error);
+        throw error;
+    }
+}
+async function searchStudentByDate(paymentDate) {
+    try {
+        let arrayStudent = await getStudent(); 
+
+        // Đảm bảo ngày được định dạng theo cùng một cách
+        const formattedDate = formatDate(new Date(paymentDate));
+
+        const listStudent = arrayStudent.filter(student => {
+            const studentDate = formatDate(new Date(student.paymentDate));
+            return studentDate === formattedDate;
+        });
+
+        return listStudent;
+    } catch (error) {
+        console.error('Lỗi khi tìm kiếm sinh viên:', error);
+        throw error;
+    }
+}
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+module.exports = { getStudent, addStudent,deleteStudentById,exportExcel,importExcel,importData,updateStudent,searchStudentByName,searchStudentByDate};
