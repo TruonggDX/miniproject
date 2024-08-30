@@ -6,7 +6,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { getStudent,addStudent,deleteStudentById,exportExcel,importData , updateStudent,searchStudentByName } = require('../service/studentService.js');
+const { getStudent,addStudent,deleteStudentById,exportExcel,importData , updateStudent,searchStudentByName,sortStudentByDate,searchStudentByPrice,searchStudentByPaymentDate } = require('../service/studentService.js');
 const { getFee,addFee, deleteFee , updateFee} = require('../service/feeService.js');
 const { getPaymentDeadline, addPaymentDeadline,deletePaymentDeadlineById,updatePaymentDeadline } = require('../service/paymentDeadline.js');
 
@@ -87,7 +87,21 @@ app.post('/read', upload.single('file'), async (req, res) => {
         console.error('Error:', error);
     }
 });
+app.get('/findByPaymentDate/:paymentDate', async (req, res) => {
+    try {
+        const paymentDate = req.params.paymentDate;
+        const listStudent = await searchStudentByPaymentDate(paymentDate);
 
+        if (listStudent.length > 0) {
+            res.status(200).json(listStudent);
+        } else {
+            res.status(404).send('Không tìm thấy sinh viên có tên này.');
+        }
+    } catch (error) {
+        console.error('Lỗi:', error);
+        res.status(500).send('Lỗi khi tìm kiếm sinh viên.');
+    }
+});
 app.get('/findByName/:name', async (req, res) => {
     try {
         const studentName = req.params.name;
@@ -104,11 +118,24 @@ app.get('/findByName/:name', async (req, res) => {
     }
 });
 
-
-app.get('/findStudentByDate/:date', async (req, res) => {
+app.get('/sortByPrice', async (req, res) => {
     try {
-        const paymentDate = req.params.date; // nhận ngày dưới dạng yyyy-mm-dd
-        const listStudent = await searchStudentByDate(paymentDate);
+        const listStudent = await searchStudentByPrice();
+
+        if (listStudent.length > 0) {
+            res.status(200).json(listStudent);
+        } else {
+            res.status(404).send('Không tìm thấy sinh viên.');
+        }
+    } catch (error) {
+        console.error('Lỗi:', error);
+        res.status(500).send('Lỗi khi tìm kiếm sinh viên.');
+    }
+});
+
+app.get('/sortByDate', async (req, res) => {
+    try {
+        const listStudent = await sortStudentByDate();
 
         if (listStudent.length > 0) {
             res.status(200).json(listStudent);

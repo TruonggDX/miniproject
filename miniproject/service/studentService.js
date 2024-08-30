@@ -22,12 +22,6 @@ async function getStudent() {
             if (a.status !== b.status) {
                 return a.status === "Chưa hoàn thành" ? -1 : 1;
             }
-            if (a.price !== b.price) {
-                return a.price - b.price;
-            }
-            if (a.paymentDate !== b.paymentDate) {
-                return new Date(a.paymentDate) - new Date(b.paymentDate); 
-            }
 
             return 0;
         });
@@ -136,8 +130,7 @@ async function searchStudentByName(name) {
 
         const listStudent = arrayStudent.filter(student => {
             const matchesName = student.name.toLowerCase().includes(name.toLowerCase());
-            const matchesDate = date ? student.paymentDate === date : true; 
-            return matchesName && matchesDate;
+            return matchesName;
         });
 
         return listStudent;
@@ -146,19 +139,25 @@ async function searchStudentByName(name) {
         throw error;
     }
 }
-async function searchStudentByDate(paymentDate) {
+async function searchStudentByPrice() {
     try {
         let arrayStudent = await getStudent(); 
 
-        // Đảm bảo ngày được định dạng theo cùng một cách
-        const formattedDate = formatDate(new Date(paymentDate));
+        arrayStudent.sort((a, b) => b.price - a.price);
 
-        const listStudent = arrayStudent.filter(student => {
-            const studentDate = formatDate(new Date(student.paymentDate));
-            return studentDate === formattedDate;
-        });
+        return arrayStudent;
+    } catch (error) {
+        console.error('Lỗi khi tìm kiếm sinh viên:', error);
+        throw error;
+    }
+}
 
-        return listStudent;
+async function sortStudentByDate() {
+    try {
+        let arrayStudent = await getStudent(); 
+        arrayStudent.sort((a, b) => new Date(b.paymentDate) - new Date(a.paymentDate));
+
+        return arrayStudent;
     } catch (error) {
         console.error('Lỗi khi tìm kiếm sinh viên:', error);
         throw error;
@@ -170,4 +169,10 @@ function formatDate(date) {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
 }
-module.exports = { getStudent, addStudent,deleteStudentById,exportExcel,importExcel,importData,updateStudent,searchStudentByName,searchStudentByDate};
+async function searchStudentByPaymentDate(paymentDate){
+    let arrayStudent = await getStudent(); 
+    let result = arrayStudent.filter(obj => obj.paymentDate === paymentDate)
+
+     return result;
+}
+module.exports = { getStudent, addStudent,deleteStudentById,exportExcel,importExcel,importData,updateStudent,searchStudentByName,sortStudentByDate,searchStudentByPrice,searchStudentByPaymentDate};
