@@ -5,14 +5,15 @@ const path = require('path');
 const { updateFeeNumber } = require('./feeService.js');
 let pathJson = "../dao/paymentDeadline.json"
 
-async function getPaymentDeadline() {
+async function getPaymentDeadline(fee_id) {
     const jsonFilePath = path.join(__dirname, pathJson);
-
+    
     try {
         const data = await fs.readFile(jsonFilePath, 'utf8');
         if(data != ""){
         const jsonData = JSON.parse(data);
-        return jsonData;
+        const filterData = jsonData.filter(obj => obj.fee_id === parseInt(fee_id));
+        return filterData;
         }
         return null;
     } catch (err) {
@@ -20,23 +21,25 @@ async function getPaymentDeadline() {
         throw err;
     }
 }
-async function addPaymentDeadline(paymentDeadline){
-    let arraypaymentDeadline;
-    if(await getPaymentDeadline() !=null){
-        arraypaymentDeadline = await getPaymentDeadline(); 
-    }else{arraypaymentDeadline =[]}
+async function addPaymentDeadline(paymentDeadline, fee_id) {
+    const jsonFilePath = path.join(__dirname, pathJson);
+    let arrayPaymentDeadline;
+    const existingData = await getPaymentDeadline(fee_id);
+    if (existingData !== null) {
+        arrayPaymentDeadline = existingData;
+    } else {
+        arrayPaymentDeadline = [];
+    }
 
-    arraypaymentDeadline.push(paymentDeadline); 
+    arrayPaymentDeadline.push(paymentDeadline);
 
-    await fs.writeFile(
-        pathJson,
-        JSON.stringify(arraypaymentDeadline),
-        err => {
-            if (err) throw err;
-            console.log("Done writing");
-        }
-    );
-
+    try {
+        await fs.writeFile(jsonFilePath, JSON.stringify(arrayPaymentDeadline, null, 2), 'utf8');
+        console.log("Done writing");
+    } catch (err) {
+        console.error('Error writing file:', err);
+        throw err;
+    }
 }
 async function deletePaymentDeadlineById(id) {
     try {

@@ -181,9 +181,10 @@ app.delete('/deleteFeeById/:id', async (req, res) => {
 });
 
 //paymentDeadlain
-app.get('/getAllPaymentDeadlain', async (req, res) => {
+app.get('/getAllPaymentDeadlain/:feeId', async (req, res) => {
     try {
-        const message = await getPaymentDeadline();
+        const fee_id = req.params.feeId;
+        const message = await getPaymentDeadline(fee_id);
         res.json(message);
     } catch (error) {
         res.status(500).send('Error reading JSON data');

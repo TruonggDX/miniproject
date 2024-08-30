@@ -49,7 +49,7 @@
       <main class="page-content" style="padding-top: 0px;">
         <ul class="nav justify-content-end mb-3" id="header">
           <li class="nav-item">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="openForm(null)">Thêm dot dong</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="openForm(null)">Thêm đợt đóng</button>
           </li>
         </ul>
       
@@ -74,7 +74,7 @@
   <div class="modal-dialog">
       <div class="modal-content">
           <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Thêm học phí</h5>
+              <h5 class="modal-title" id="exampleModalLabel">Thêm đợt đóng</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
               </button>
@@ -83,7 +83,7 @@
               <form id="detailFeeForm">
                 <input type="number" name="id" value="1" hidden>
                   <div class="form-group">
-                      <label>Dot dong </label>
+                      <label>Đợt đóng </label>
                       <input type="number" class="form-control" name="name" value="1" disabled>
                   </div>
                   <div class="form-group">
@@ -105,7 +105,7 @@
               <form id="updateForm">
                 <input type="number" name="old_id" value="1" hidden>
                   <div class="form-group">
-                      <label>Dot dong </label>
+                      <label>Đợt đóng </label>
                       <input type="number" class="form-control" name="oldName" value="1" disabled>
                   </div>
                   <div class="form-group">
@@ -120,7 +120,7 @@
 
                   <div class="form-group">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                    <button type="button" class="btn btn-primary" id="savePaymentPlan" onclick="updateDetailFee()">Cap nhat</button>
+                    <button type="button" class="btn btn-primary" id="savePaymentPlan" onclick="updateDetailFee()">Cập nhật</button>
                  </div>
               </form>
           </div>
@@ -138,8 +138,8 @@
       let fee_id = JSON.parse(urlParams.get("fee_id"))
       document.querySelector('input[name="fee_id"]').value = parseInt(fee_id)
 
-      fetch('http://localhost:3000/getAllPaymentDeadlain')
-            .then(response => response.json())
+      fetch(`http://localhost:3000/getAllPaymentDeadlain/${parseInt(fee_id)}`)
+            .then(response => response.json())  
             .then(data => {
                 let id = null;
                 const tableData = document.getElementById('detailFeeList');
@@ -155,10 +155,10 @@
                               <td>${formatCurrency(detailFee.price)}</td>
                               <td>
                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick='openForm(${JSON.stringify(detailFee)})'>
-                                  <i class="fas fa-edit"></i> Cap nhat
+                                  <i class="fas fa-edit"></i> Cập nhật
                                   </button>
 
-                                <button type="button" class="btn btn-danger btn-sm" data-name="${detailFee.id}" onclick="deletedetailFee(${detailFee.id})">
+                                <button style="width:100px;height:37px" type="button" class="btn btn-danger btn-sm" data-name="${detailFee.id}" onclick="deletedetailFee(${detailFee.id})">
                                     <i class="fas fa-trash-alt"></i> Xóa
                                 </button>
 
@@ -186,7 +186,7 @@
                   });
               
                   if (response.ok) {
-                      alert('Dot dong đã được thêm thành công!');
+                      alert('Đợt đóng đã được thêm thành công!');
                       $('#exampleModal').modal('hide');
                   } else {
                       alert('Có lỗi xảy ra khi thêm');
@@ -231,6 +231,7 @@
 
       async function updateDetailFee(){
         let formValue =formToObject("#updateForm")
+        
         formValue.id = parseInt(formValue.old_id)
         formValue.fee_id = parseInt(formValue.oldFee_id)
         formValue.price = parseInt(formValue.newPrice)
