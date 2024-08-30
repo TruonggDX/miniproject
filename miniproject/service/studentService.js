@@ -1,8 +1,13 @@
 const fs = require('fs').promises; 
 const xlsx = require('xlsx');
+const multer = require('multer');
+const excelToJson = require('convert-excel-to-json');
+const fse = require('fs-extra');
 const { get } = require('https');
 const path = require('path');
 let pathStudentJson = "../dao/student.json"
+const upload = multer({ dest: 'uploads/' });
+
 
 async function getStudent() {
     const jsonFilePath = path.join(__dirname, pathStudentJson);
@@ -45,20 +50,21 @@ async function deleteStudentById(id) {
     }
 }
 
-async function exportExcel(){
-    try{
-        const student = await getStudent()
+async function exportExcel() {
+    try {
+        const student = await getStudent();
         const workbook = xlsx.utils.book_new();
-        const worksheet = xlsx.utils.json_to_sheet(student)
-        xlsx.utils.book_append_sheet(workbook,worksheet,'student')
+        const worksheet = xlsx.utils.json_to_sheet(student);
+        xlsx.utils.book_append_sheet(workbook, worksheet, 'student');
         const filePath = path.join(__dirname, 'students_list.xlsx');
-
 
         xlsx.writeFile(workbook, filePath);
 
         console.log('Xuất Excel thành công:', filePath);
+        return filePath;  
     } catch (error) {
         console.error('Lỗi khi xuất Excel:', error);
+        throw error;
     }
 }
 async function updateStudent(newStudent) {
@@ -79,4 +85,30 @@ async function updateStudent(newStudent) {
     }
 }   
 
-module.exports = { getStudent, addStudent,deleteStudentById,exportExcel,updateStudent};
+async function importExcel(filePath) {
+    try {
+        const workbook = xlsx.readFile(filePath);
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const data = xlsx.utils.sheet_to_json(worksheet);
+        return data;
+    } catch (error) {
+        console.error('Lỗi đọc file:', error);
+        throw error;
+    }
+}
+
+
+async function importData(filePath) {
+    try {
+        const newData = await importExcel(filePath);
+        const currentData = await getStudent();
+        const updatedData = currentData.concat(newData);
+        await fs.writeFile(pathStudentJson, JSON.stringify(updatedData, null, 2), 'utf8');
+        console.log('Thành công');
+    } catch (error) {
+        console.error('Error importing data:', error);
+        throw error;
+    }
+}
+module.exports = { getStudent, addStudent,deleteStudentById,exportExcel,importExcel,importData,updateStudent};
