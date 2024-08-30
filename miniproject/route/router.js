@@ -1,12 +1,18 @@
 const express = require('express');
+const xlsx = require('xlsx');
+const multer = require('multer');
+
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { getStudent,addStudent,deleteStudentById } = require('../service/studentService.js');
+const { getStudent,addStudent,deleteStudentById,exportExcel,importExcel } = require('../service/studentService.js');
 const { getFee,addFee, deleteFee } = require('../service/feeService.js');
 
 const app = express();
 const PORT = 3000;
 
+const upload = multer({ 
+    dest: path.join(__dirname, 'uploads') // Đặt thư mục upload tạm
+});
 app.use(cors());
 
 app.use(express.json());
@@ -38,6 +44,19 @@ app.post('/addStudent', async (req, res) => {
     } catch (err) {
         console.error('Error adding student:', err);
         res.status(500).send('Có lỗi xảy ra khi thêm sinh viên.');
+    }
+});
+
+app.get('/export-students', async (req, res) => {
+    try {
+        const filePath = await exportExcel(); 
+        res.download(filePath, 'students_list.xlsx', (err) => {
+            if (err) {
+                res.status(500).send('Lỗi tải file');
+            }
+        });
+    } catch (error) {
+        res.status(500).send('Có lỗi xảy ra khi xuất file Excel.');
     }
 });
 

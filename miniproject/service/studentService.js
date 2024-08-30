@@ -1,4 +1,5 @@
 const fs = require('fs').promises; 
+const xlsx = require('xlsx');
 const { get } = require('https');
 const path = require('path');
 let pathStudentJson = "../dao/student.json"
@@ -44,4 +45,21 @@ async function deleteStudentById(id) {
     }
 }
 
-module.exports = { getStudent, addStudent,deleteStudentById };
+async function exportExcel(){
+    try{
+        const student = await getStudent()
+        const workbook = xlsx.utils.book_new();
+        const worksheet = xlsx.utils.json_to_sheet(student)
+        xlsx.utils.book_append_sheet(workbook,worksheet,'student')
+        const filePath = path.join(__dirname, 'students_list.xlsx');
+
+
+        xlsx.writeFile(workbook, filePath);
+
+        console.log('Xuất Excel thành công:', filePath);
+    } catch (error) {
+        console.error('Lỗi khi xuất Excel:', error);
+    }
+}
+
+module.exports = { getStudent, addStudent,deleteStudentById,exportExcel};

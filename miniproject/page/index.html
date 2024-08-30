@@ -52,11 +52,12 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Thêm sinh viên</button>
           </li>
           <li class="nav-item">
-            <button type="button" class="btn btn-secondary">Import Excel</button>
+            <button type="button" class="btn btn-secondary" id="uploadButton">Import Excel</button>
+            <input type="file" id="fileInput" accept=".xlsx" hidden />
           </li>
           <li class="nav-item">
-            <button type="button" class="btn btn-info">Export Excel</button>
-          </li>
+            <button type="button" class="btn btn-info" onclick="exportExcelBtn()" id="exportExcelBtn">Export Excel</button>
+        </li>        
         </ul>
       
         <table class="table table-striped">
@@ -230,12 +231,31 @@
       }
     }
     
- 
-   
-
-
-
-
+    function exportExcelBtn() {
+      fetch('http://localhost:3000/export-students')
+          .then(response => {
+              if (response.ok) {
+                  return response.blob();
+              } else {
+                  throw new Error('lỗi');
+              }
+          })
+          .then(blob => {
+              const url = window.URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'students_list.xlsx';
+              document.body.appendChild(a);
+              a.click();
+              a.remove();
+          })
+          .catch(error => {
+              console.error('Lỗi:', error);
+              alert('Không thể xuất file Excel.');
+          });
+  };
+  
+  
 
   </script>
 
