@@ -2,12 +2,12 @@
   {
     "id": 7,
     "name": "nhat minh",
-    "gender": "Nam",
     "price": 1700000,
     "status": "Chưa hoàn thành",
-    "paymentDate": "2024-07-11",
-    "dob": "2003-1-15",
-    "address": "Đan Phương"
+    "date": "",
+    "dob": "",
+    "address": "Đan Phương",
+    "gender": "Nam"
   },
   {
     "id": 6,

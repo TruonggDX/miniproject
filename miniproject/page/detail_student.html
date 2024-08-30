@@ -101,8 +101,9 @@
           <form class="addFee">
             <div class="form-group">
               <div class="row">
+                <input type="text" name="student_id" hidden>
                 <div class="col-10">
-                  <select name="feeId" id="selectFee" class="form-control">
+                  <select name="fee_id" id="selectFee" class="form-control">
                     <option value="">Chọn hoc phi</option>
                   </select>
                 </div>
@@ -115,42 +116,14 @@
           <thead>
             <tr>
               <th scope="col">STT</th>
-              <th scope="col">Tên</th>
               <th scope="col">Đợt</th>
               <th scope="col">Số tiền</th>
               <th scope="col">Trạng thái</th>
             
             </tr>
           </thead>
-          <tbody id="studentList">
-            <tr>
-              <th scope="row">1</th>
-              <td>Nguyễn Văn A</td>
-              <td>500,000 VNĐ</td>
-              <td>Đã hoàn thành</td>
-              <td>
-                <select name="status" id="selectStatus" class="form-control">
-                    <option value="">Chọn trạng thái</option>
-                    <option value="complete">Đã hoàn thành</option>
-                    <option value="incomplete">Chưa hoàn thành</option>
-                  </select>
-              </td>  
-          </tr>
-          <tr>
-              <th scope="row">2</th>
-              <td>Trần Thị B</td>
-              <td>300,000 VNĐ</td>
-              <td>Chưa hoàn thành</td>
-              <td>2001-05-15</td>
-          </tr>
-          <tr>
-              <th scope="row">3</th>
-              <td>Hoàng Văn C</td>
-              <td>700,000 VNĐ</td>
-              <td>Đã hoàn thành</td>
-              <td>2002-10-20</td>
-              
-          </tr>
+          <tbody id="list">
+            
           </tbody>
         </table>
       </main>
@@ -177,6 +150,7 @@
         document.querySelector('input[name="status"]').value = student.status
         document.querySelector('input[name="dob"]').value = student.dob
         document.querySelector('input[name="address"]').value = student.address
+        document.querySelector('input[name="student_id"]').value = student.id
       }
 
       renderStudent()
@@ -218,7 +192,85 @@
             console.error(error);
        }
       }
-      
+      async function addFeeToStudent() {
+        let formValue = formToObject(".addFee")
+        formValue.student_id = parseInt(formValue.student_id)
+        formValue.fee_id = parseInt(formValue.fee_id)
+        try {
+          const response = await fetch('http://localhost:3000/addPaymentDeadline_student', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formValue)
+          });
+              
+          if (response.ok) {
+            alert('Thêm thành công!');
+            $('#exampleModal').modal('hide');
+          } else {
+            alert('Có lỗi xảy ra khi thêm');
+          }
+        } catch (error) {
+        console.error(error);
+        }
+      }
+
+      async function renderPaymentDeadline() {
+        let student_id = document.querySelector('input[name="student_id"]').value
+        fetch('http://localhost:3000/getAllPaymentDeadline_student/'+student_id)
+            .then(response => response.json())
+            .then(data => {
+                let id = null;
+                const tableData = document.getElementById('list');
+                tableData.innerHTML = '';
+                for (let i = 0; i < data.length; i++) {
+                    let valueDate = data[i];
+                    id = valueDate.id
+                    let row = `<tr>
+                              <th scope="row">${i+1}</th>
+                              <td>${valueDate.name}</td>
+                              <td>${formatCurrency(valueDate.price)}
+                                </td>
+                              <td>
+                                <select name="status" id="selectStatus" class="form-control">
+                                    <option value="">${valueDate.status}</option>
+                                    <option value="Đã hoàn thành">Đã hoàn thành</option>
+                                  </select>
+                              </td>  
+                          </tr>`;
+                    tableData.innerHTML += row;
+                }
+                document.querySelector('input[name="id"]').value = id+1
+                document.querySelector('input[name="name"]').value = id+1
+            })
+            .catch(error => console.error('Error fetching JSON:', error));
+      }
+      async function saveDetailFee(){
+              let formValue =formToObject("#detailFeeForm")
+              formValue.id = parseInt(formValue.id)
+              formValue.fee_id = parseInt(formValue.fee_id)
+              formValue.price = parseInt(formValue.price)
+              try {
+                  const response = await fetch('http://localhost:3000/addPaymentDeadlain', {
+                      method: 'POST',
+                      headers: {
+                          'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(formValue)
+                  });
+              
+                  if (response.ok) {
+                      alert('Dot dong đã được thêm thành công!');
+                      $('#exampleModal').modal('hide');
+                  } else {
+                      alert('Có lỗi xảy ra khi thêm');
+                  }
+              } catch (error) {
+                  console.error(error);
+              }
+            }
+            renderPaymentDeadline()
     </script>
   
 </body>

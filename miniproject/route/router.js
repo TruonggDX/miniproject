@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const { getStudent,addStudent,deleteStudentById,exportExcel,importData , updateStudent,searchStudentByName,sortStudentByDate,searchStudentByPrice,searchStudentByPaymentDate } = require('../service/studentService.js');
 const { getFee,addFee, deleteFee , updateFee} = require('../service/feeService.js');
 const { getPaymentDeadline, addPaymentDeadline,deletePaymentDeadlineById,updatePaymentDeadline } = require('../service/paymentDeadline.js');
+const { getAllPaymentDeadline_student, addPaymentDeadline_student } = require('../service/paymentDeadline_student.js');
 
 const app = express();
 const PORT = 3000;
@@ -147,10 +148,6 @@ app.get('/sortByDate', async (req, res) => {
     }
 });
 
-
-
-//
-
 //Fee
 app.get('/getAllFee', async (req, res) => {
     try {
@@ -180,7 +177,7 @@ app.delete('/deleteFeeById/:id', async (req, res) => {
     }
 });
 
-//paymentDeadlain
+//paymentDeadline
 app.get('/getAllPaymentDeadlain', async (req, res) => {
     try {
         const message = await getPaymentDeadline();
@@ -218,14 +215,32 @@ app.put('/updatePaymentDeadline', async (req, res) => {
         res.status(500).send('Có lỗi xảy ra khi cập nhật.');
     }
 });
-app.get('/user/:id', (req, res) => {
-    const userId = req.params.id;
-    res.send(`User ID is: ${userId}`);
+
+//PaymentDeadline_student
+app.get('/getAllPaymentDeadline_student/:student_id', async (req, res) => {
+    try {
+        const student_id = req.params.student_id;
+
+        const message = await getAllPaymentDeadline_student(student_id);
+        res.json(message);
+    } catch (error) {
+        res.status(500).send('Error reading JSON data');
+    }
+});
+app.post('/addPaymentDeadline_student', async (req, res) => {
+    try {
+        const paymentDeadline_student = req.body;
+        await addPaymentDeadline_student(paymentDeadline_student);
+        res.status(200).send('Thêm thành công!');
+    } catch (err) {
+        console.error('Error adding student:', err);
+        res.status(500).send('Có lỗi xảy ra khi thêm .');
+    }
 });
 
-app.use((req, res) => {
-    res.status(404).send('404: Not Found');
-});
+// app.use((req, res) => {
+//     res.status(404).send('404: Not Found');
+// });
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
