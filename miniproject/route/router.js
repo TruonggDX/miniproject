@@ -1,18 +1,18 @@
 const express = require('express');
 const xlsx = require('xlsx');
 const multer = require('multer');
-
+const excelToJson = require("convert-excel-to-json")
+const fs = require('fs-extra'); 
+const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { getStudent,addStudent,deleteStudentById,exportExcel,importExcel } = require('../service/studentService.js');
+const { getStudent,addStudent,deleteStudentById,exportExcel,importData} = require('../service/studentService.js');
 const { getFee,addFee, deleteFee } = require('../service/feeService.js');
 
 const app = express();
 const PORT = 3000;
+const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
-const upload = multer({ 
-    dest: path.join(__dirname, 'uploads') // Đặt thư mục upload tạm
-});
 app.use(cors());
 
 app.use(express.json());
@@ -56,9 +56,29 @@ app.get('/export-students', async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).send('Có lỗi xảy ra khi xuất file Excel.');
+        res.status(500).send('Lỗi xuất file Excel.');
     }
 });
+
+app.post('/read', upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file || !req.file.filename) {
+            return res.status(400).json('khong có file upload');
+        }
+        const filePath = path.join(__dirname, 'uploads', req.file.filename);
+        await fs.access(filePath);
+        
+        await importData(filePath);
+        await fs.unlink(filePath);
+        res.status(200).json('import thành công');
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+
+
+//
 
 //Fee
 app.get('/getAllFee', async (req, res) => {
