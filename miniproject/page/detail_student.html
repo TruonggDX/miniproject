@@ -54,8 +54,9 @@
             <button type="button" class="btn btn-info">Export Excel</button>
           </li>
         </ul>
-        <div class="modal-body">
+          <form class="updateStudent">
             <h3>Thông tin sinh viên</h3>
+            <input type="text" name="id" hidden>
             <div class="form-group">
               <label>Tên sinh viên</label>
               <input type="text" class="form-control" name="name" placeholder="Nhập tên sinh viên">
@@ -88,7 +89,25 @@
               <label>Địa chỉ</label>
               <input type="text" class="form-control" name="address" placeholder="Nhập địa chỉ">
             </div>
-          </div>
+            <div class="form-group">
+              <button type="button" class="btn btn-primary" onclick="updateStudent()">Cap nhat</button>
+            </div>
+
+          </form>
+
+          <form class="addFee">
+            <div class="form-group">
+              <div class="row">
+                <div class="col-10">
+                  <select name="feeId" id="selectFee" class="form-control">
+                    <option value="">Chọn hoc phi</option>
+                  </select>
+                </div>
+                <div class="col-2"> <button type="button" class="btn btn-primary" onclick="addFeeToStudent()">Them hoc phi</button>
+                </div>
+              </div>
+            </div>
+          </form>
         <table class="table table-striped">
           <thead>
             <tr>
@@ -107,7 +126,7 @@
               <td>500,000 VNĐ</td>
               <td>Đã hoàn thành</td>
               <td>
-                <select name="status" id="select" class="form-control">
+                <select name="status" id="selectStatus" class="form-control">
                     <option value="">Chọn trạng thái</option>
                     <option value="complete">Đã hoàn thành</option>
                     <option value="incomplete">Chưa hoàn thành</option>
@@ -132,13 +151,72 @@
           </tbody>
         </table>
       </main>
-</div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="../js/script.js"></script>
- 
+    <script src="../js//formToObj.js"></script>
+    <script>
+      function renderStudent() {
+        const urlParams = new URLSearchParams(window.location.search);
+        let student = JSON.parse(urlParams.get("student"))
+        let otpGender = `<option value="${student.gender}">${student.gender}</option>
+                          <option value="">Chọn giới tính</option>
+                          <option value="Nam">Nam</option>
+                          <option value="Nữ">Nữ</option>` ;
+        
+        document.querySelector('input[name="id"]').value = student.id
+        document.querySelector('input[name="name"]').value = student.name
+      
+        document.querySelector('select[name="gender"]').innerHTML = otpGender
+        document.querySelector('input[name="price"]').value = student.price
+        document.querySelector('input[name="status"]').value = student.status
+        document.querySelector('input[name="dob"]').value = student.dob
+        document.querySelector('input[name="address"]').value = student.address
+      }
+
+      renderStudent()
+      async function renderFee() {
+         fetch('http://localhost:3000/getAllFee')
+            .then(response => response.json())
+            .then(data => {
+                const selectFee = document.getElementById('selectFee');
+                let html = `                    <option value="">Chọn hoc phi</option>`
+                for (let i = 0; i < data.length; i++) {
+                  let fee = data[i];
+                   html+= `<option value="${fee.id}">${fee.name} - ${formatCurrency(fee.total)} - ${fee.number} dot</option>`
+                }
+                selectFee.innerHTML = html
+            })
+            .catch(error => console.error('Error fetching JSON:', error));
+        
+      }
+      renderFee()
+      async function updateStudent(){
+        let formValue =formToObject(".updateStudent")
+        formValue.id = parseInt(formValue.id)
+        formValue.price = parseInt(formValue.price)
+        try {
+            const response = await fetch('http://localhost:3000/updateStudent', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formValue)
+            });
+        
+            if (response.ok) {
+                window.location.href=`/page/detail_student.html?student=${JSON.stringify(formValue)}`
+            } else {
+                alert('Có lỗi xảy ra');
+            }
+        } catch (error) {
+            console.error(error);
+       }
+      }
+      
+    </script>
   
 </body>
 </html>

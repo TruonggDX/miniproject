@@ -1,18 +1,19 @@
 const express = require('express');
 const xlsx = require('xlsx');
 const multer = require('multer');
-
+const excelToJson = require("convert-excel-to-json")
+const fs = require('fs-extra'); 
+const path = require('path');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { getStudent,addStudent,deleteStudentById,exportExcel,importExcel } = require('../service/studentService.js');
-const { getFee,addFee, deleteFee } = require('../service/feeService.js');
+const { getStudent,addStudent,deleteStudentById,exportExcel,importData , updateStudent } = require('../service/studentService.js');
+const { getFee,addFee, deleteFee , updateFee} = require('../service/feeService.js');
+const { getPaymentDeadline, addPaymentDeadline,deletePaymentDeadlineById,updatePaymentDeadline } = require('../service/paymentDeadline.js');
 
 const app = express();
 const PORT = 3000;
+const upload = multer({ dest: path.join(__dirname, 'uploads') });
 
-const upload = multer({ 
-    dest: path.join(__dirname, 'uploads') // Đặt thư mục upload tạm
-});
 app.use(cors());
 
 app.use(express.json());
@@ -46,6 +47,16 @@ app.post('/addStudent', async (req, res) => {
         res.status(500).send('Có lỗi xảy ra khi thêm sinh viên.');
     }
 });
+app.put('/updateStudent', async (req, res) => {
+    try {
+        const student = req.body;
+        await updateStudent(student);
+        res.status(200).send('Cập nhật thành công!');
+    } catch (err) {
+        console.error('Error updating student:', err);
+        res.status(500).send('Có lỗi xảy ra khi cập nhật sinh viên.');
+    }
+});
 
 app.get('/export-students', async (req, res) => {
     try {
@@ -56,9 +67,29 @@ app.get('/export-students', async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).send('Có lỗi xảy ra khi xuất file Excel.');
+        res.status(500).send('Lỗi xuất file Excel.');
     }
 });
+
+app.post('/read', upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file || !req.file.filename) {
+            return res.status(400).json('khong có file upload');
+        }
+        const filePath = path.join(__dirname, 'uploads', req.file.filename);
+        await fs.access(filePath);
+        
+        await importData(filePath);
+        await fs.unlink(filePath);
+        res.status(200).json('import thành công');
+    } catch (error) {
+        console.error('Error:', error);
+    }
+});
+
+
+
+//
 
 //Fee
 app.get('/getAllFee', async (req, res) => {
@@ -89,10 +120,48 @@ app.delete('/deleteFeeById/:id', async (req, res) => {
     }
 });
 
-// app.get('/user/:id', (req, res) => {
-//     const userId = req.params.id;
-//     res.send(`User ID is: ${userId}`);
-// });
+//paymentDeadlain
+app.get('/getAllPaymentDeadlain', async (req, res) => {
+    try {
+        const message = await getPaymentDeadline();
+        res.json(message);
+    } catch (error) {
+        res.status(500).send('Error reading JSON data');
+    }
+});
+app.post('/addPaymentDeadlain', async (req, res) => {
+    try {
+        const fee = req.body;
+        await addPaymentDeadline(fee);
+        res.status(200).send('Học phí đã được thêm thành công!');
+    } catch (err) {
+        console.error('Error adding student:', err);
+        res.status(500).send('Có lỗi xảy ra khi thêm .');
+    }
+});
+app.delete('/deletePaymentDeadlainById/:id', async (req, res) => {
+    try {
+        const feeId = req.params.id;
+        await deletePaymentDeadlineById(feeId);
+        res.status(200).send('Xóa thành công!');
+    } catch (error) {
+        res.status(404).send('Không tìm thấy id học phí.');
+    }
+});
+app.put('/updatePaymentDeadline', async (req, res) => {
+    try {
+        const student = req.body;
+        await updatePaymentDeadline(student);
+        res.status(200).send('Cập nhật thành công!');
+    } catch (err) {
+        console.error('Error updating student:', err);
+        res.status(500).send('Có lỗi xảy ra khi cập nhật.');
+    }
+});
+app.get('/user/:id', (req, res) => {
+    const userId = req.params.id;
+    res.send(`User ID is: ${userId}`);
+});
 
 app.use((req, res) => {
     res.status(404).send('404: Not Found');

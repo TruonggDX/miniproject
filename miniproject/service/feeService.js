@@ -28,6 +28,7 @@ async function addFee(fee){
             console.log("Done writing");
         }
     );
+
 }
 async function deleteFee(feeId) {
     try {
@@ -44,5 +45,22 @@ async function deleteFee(feeId) {
     }
 }
 
+async function updateFee(newFee) {
+    let arrayFee = await getFee(); 
+    const index = arrayFee.findIndex(obj => obj.id === newFee.id);
 
-module.exports = { getFee, addFee,deleteFee };
+    if (index !== -1) {
+        arrayFee[index] = newFee;
+
+        await fs.writeFile(
+            pathJson,
+            JSON.stringify(arrayFee, null, 2) 
+        );
+        console.log("Đã cập nhật thành công");
+    } else {
+        console.error('Sinh viên không tồn tại');
+        throw new Error('Sinh viên không tồn tại');
+    }
+}   
+ 
+module.exports = { getFee, addFee,deleteFee,  updateFee};

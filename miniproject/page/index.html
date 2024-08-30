@@ -52,9 +52,10 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Thêm sinh viên</button>
           </li>
           <li class="nav-item">
-            <button type="button" class="btn btn-secondary" id="uploadButton">Import Excel</button>
+            <button type="button" class="btn btn-secondary" onclick="importExcel()">Import Excel</button>
             <input type="file" id="fileInput" accept=".xlsx" hidden />
-          </li>
+        </li>
+        
           <li class="nav-item">
             <button type="button" class="btn btn-info" onclick="exportExcelBtn()" id="exportExcelBtn">Export Excel</button>
         </li>        
@@ -196,7 +197,7 @@
           <td>${formattedDob}</td>
           <td>${student.address}</td>
           <td>
-            <a href="detail_student.html" type="button" class="btn btn-primary btn-sm">
+            <a href="detail_student.html?student=${ encodeURIComponent(JSON.stringify(student))}" type="button" class="btn btn-primary btn-sm">
               <i class="fas fa-edit"></i> Chi tiết
             </a>
             
@@ -235,9 +236,9 @@
       fetch('http://localhost:3000/export-students')
           .then(response => {
               if (response.ok) {
-                  return response.blob();
+                  return response.blob();  // Nhận phản hồi dưới dạng blob
               } else {
-                  throw new Error('lỗi');
+                  throw new Error('Lỗi khi tải file.');
               }
           })
           .then(blob => {
@@ -248,14 +249,42 @@
               document.body.appendChild(a);
               a.click();
               a.remove();
+              window.URL.revokeObjectURL(url);  // Giải phóng URL object sau khi tải xong
           })
           .catch(error => {
               console.error('Lỗi:', error);
               alert('Không thể xuất file Excel.');
           });
-  };
+  }
   
   
+  function importExcel() {
+    const fileInput = document.getElementById('fileInput');
+    fileInput.addEventListener('change', async () => {
+        const file = fileInput.files[0];
+        if (file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('http://localhost:3000/read', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Import successful:', data);
+                } else {
+                    console.error('Error importing file:', await response.text());
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+    });
+    fileInput.click();
+}
 
   </script>
 
