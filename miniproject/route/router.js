@@ -61,7 +61,7 @@ app.post('/addFee', async (req, res) => {
         res.status(500).send('Có lỗi xảy ra khi thêm .');
     }
 });
-app.delete('deleteFeeById/:id', async (req, res) => {
+app.delete('/deleteFeeById/:id', async (req, res) => {
     try {
         const feeId = req.params.id;
         await deleteFee(feeId);
