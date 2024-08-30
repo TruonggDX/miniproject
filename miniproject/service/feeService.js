@@ -32,7 +32,7 @@ async function addFee(fee){
 async function deleteFee(feeId) {
     try {
         let arrayFee = await getFee();
-        const filterFee = arrayFee.filter(fee => fee.id !== feeId);
+        const filterFee = arrayFee.filter(fee => fee.id !== parseInt(feeId)); // Chuyển đổi feeId
         await fs.writeFile(
             pathStudentJson,
             JSON.stringify(filterFee, null, 2),
@@ -43,5 +43,6 @@ async function deleteFee(feeId) {
         console.error('Lỗi:', err);
     }
 }
+
 
 module.exports = { getFee, addFee,deleteFee };

@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const { getStudent,addStudent,deleteStudentByName } = require('../service/studentService.js');
+const { getStudent,addStudent,deleteStudentById } = require('../service/studentService.js');
 const { getFee,addFee, deleteFee } = require('../service/feeService.js');
 
 const app = express();
@@ -20,14 +20,13 @@ app.get('/', async (req, res) => {
         res.status(500).send('Error reading JSON data');
     }
 });
-
-app.delete('/delete/:name', async (req, res) => {
+app.delete('/deleteStudentById/:id', async (req, res) => {
     try {
-        const studentName = req.params.name;
-        await deleteStudentByName(studentName);
+        const studentId = req.params.id;
+        await deleteStudentById(studentId);
         res.status(200).send('Xóa thành công!');
     } catch (error) {
-        res.status(404).send('Không tìm thấy tên sinh viên.');
+        res.status(404).send('Không tìm thấy id học phí.');
     }
 });
 

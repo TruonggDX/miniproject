@@ -1,5 +1,4 @@
-
-const fs = require('fs').promises; // Sử dụng fs.promises để có hàm async
+const fs = require('fs').promises; 
 const { get } = require('https');
 const path = require('path');
 let pathStudentJson = "../dao/student.json"
@@ -29,12 +28,13 @@ async function addStudent(student){
         }
     );
 }
-async function deleteStudentByName(name) {
+async function deleteStudentById(id) {
     try {
+        const jsonFilePath = path.join(__dirname, pathStudentJson);
         let arrayStudent = await getStudent();
-        const updatedStudents = arrayStudent.filter(student => student.name !== name);
+        const updatedStudents = arrayStudent.filter(student => student.id !== parseInt(id));
         await fs.writeFile(
-            pathStudentJson,
+            jsonFilePath,
             JSON.stringify(updatedStudents, null, 2),
             'utf8'
         );
@@ -44,4 +44,4 @@ async function deleteStudentByName(name) {
     }
 }
 
-module.exports = { getStudent, addStudent,deleteStudentByName };
+module.exports = { getStudent, addStudent,deleteStudentById };

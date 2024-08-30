@@ -94,11 +94,12 @@
         </div>
         <form id="studentForm">
           <div class="modal-body">
+            <input type="number" name="id">
             <div class="form-group">
               <label>Tên sinh viên</label>
               <input type="text" class="form-control" name="name" placeholder="Nhập tên sinh viên">
             </div>
-    
+              
             <div class="form-group">
               <label>Giới tính</label>
               <select name="gender" id="select" class="form-control">
@@ -150,6 +151,7 @@
     <script>
     document.getElementById('saveStudent').addEventListener('click', async function() {
       let formValue =formToObject("#studentForm")
+      formValue.id = parseInt(formValue.id)
       try {
           const response = await fetch('http://localhost:3000/addStudent', {
               method: 'POST',
@@ -176,13 +178,14 @@
   fetch('http://localhost:3000')
     .then(response => response.json())
     .then(data => {
+      let id =null
       const tableData = document.getElementById('studentList');
       tableData.innerHTML = ''; 
       for (let i = 0; i < data.length; i++) {
         let student = data[i];
         let date = new Date(student.dob);
         let formattedDob = formatDate(date)
-        console.log('data', student);
+        id =student.id
         let row = `<tr>
           <th scope="row">${i + 1}</th>
           <td>${student.name}</td>
@@ -196,7 +199,7 @@
               <i class="fas fa-edit"></i> Chi tiết
             </a>
             
-            <button type="button" class="btn btn-danger btn-sm" data-name="${student.name}" onclick="deleteStudent('${student.name}')" id="deleteStudent">
+            <button type="button" class="btn btn-danger btn-sm"  data-name="${student.id}" onclick="deleteStudent(${student.id})">
                 <i class="fas fa-trash-alt"></i> Xóa
             </button>
         
@@ -204,15 +207,18 @@
             </tr>`;
         tableData.innerHTML += row;
       }
+      document.querySelector('input[name="id"]').value = id+1
     })
     .catch(error => console.error('Error fetching JSON:', error));
 
-    async function deleteStudent(name){
+   
+
+    async function deleteStudent(id) {
       try {
-        const response = await fetch(`http://localhost:3000/delete/${name}`, {
+        const response = await fetch(`http://localhost:3000/deleteStudentById/${id}`, {
           method: 'DELETE'
         });
-
+    
         if (response.ok) {
           alert('Xóa thành công!');
         } else {
@@ -223,7 +229,7 @@
         alert('Có lỗi xảy ra khi xóa sinh viên.');
       }
     }
-
+    
  
    
 

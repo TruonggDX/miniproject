@@ -153,6 +153,8 @@
 
         async function saveFee(){
             let formValue =formToObject("#feeForm")
+            formValue.id = parseInt(formValue.id)
+            formValue.total = parseInt(formValue.total)
             try {
                 const response = await fetch('http://localhost:3000/addFee', {
                     method: 'POST',
