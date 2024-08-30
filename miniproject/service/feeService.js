@@ -29,19 +29,19 @@ async function addFee(fee){
         }
     );
 }
-// async function deleteFee(name) {
-//     try {
-//         let arrayStudent = await getStudent();
-//         const updatedStudents = arrayStudent.filter(student => student.name !== name);
-//         await fs.writeFile(
-//             pathStudentJson,
-//             JSON.stringify(updatedStudents, null, 2),
-//             'utf8'
-//         );
-//         console.log('Xóa thành công');
-//     } catch (err) {
-//         console.error('Lỗi:', err);
-//     }
-// }
+async function deleteFee(feeId) {
+    try {
+        let arrayFee = await getFee();
+        const filterFee = arrayFee.filter(fee => fee.id !== feeId);
+        await fs.writeFile(
+            pathStudentJson,
+            JSON.stringify(filterFee, null, 2),
+            'utf8'
+        );
+        console.log('Xóa thành công');
+    } catch (err) {
+        console.error('Lỗi:', err);
+    }
+}
 
-module.exports = { getFee, addFee };
+module.exports = { getFee, addFee,deleteFee };

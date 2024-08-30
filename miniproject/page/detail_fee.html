@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+</head>
+<body>
+  
+    <div class="page-wrapper chiller-theme toggled">    
+      <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+        <i class="fas fa-bars"></i>
+      </a>
+      <nav id="sidebar" class="sidebar-wrapper">
+        <div class="sidebar-content">
+          <div class="sidebar-brand">
+            <a href="#">Phần mềm thu học phí</a>
+            <div id="close-sidebar">
+              <i class="fas fa-times"></i>
+            </div>
+          </div>
+      
+          
+          <!-- sidebar-search  -->
+          <div class="sidebar-menu">
+            <ul>
+              <li class="header-menu">
+                <span>Nội dung</span>
+              </li>
+              <li>
+                <a href="index.html">
+                  <i class="fa fa-tachometer-alt"></i>
+                  <span>Danh sách sinh viên</span>
+                </a>
+              </li>
+              <li>
+                <a href="page_price.html">
+                  <i class="fa fa-shopping-cart"></i>
+                  <span>Học phí</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <main class="page-content" style="padding-top: 0px;">
+        <ul class="nav justify-content-end mb-3" id="header">
+          <li class="nav-item">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Thêm sinh viên</button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="btn btn-secondary">Import Excel</button>
+          </li>
+          <li class="nav-item">
+            <button type="button" class="btn btn-info">Export Excel</button>
+          </li>
+        </ul>
+      
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th scope="col">STT</th>
+              <th scope="col">Đợt đóng</th>
+              <th scope="col">Hạn đóng</th>
+              <th scope="col">Số tiền</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody id="studentList">
+            <tr>
+                <td>1</td>
+                <td>1</td>
+                <td>18/08/2024</td>
+                <td>10000000</td>
+                <td>
+                    <a href="#" type="button" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit"></i> Chi tiết
+                      </a>
+
+                      <button type="button" class="btn btn-danger btn-sm">
+                          <i class="fas fa-trash-alt"></i> Xóa
+                      </button>
+                </td>
+            </tr>
+          </tbody>
+        </table>
+      </main>
+   
+</div>
+
+  
+  
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/formToObj.js"></script>
+
+   
+</body>
+</html>

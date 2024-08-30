@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const { getStudent,addStudent,deleteStudentByName } = require('../service/studentService.js');
-const { getFee,addFee } = require('../service/feeService.js');
+const { getFee,addFee, deleteFee } = require('../service/feeService.js');
 
 const app = express();
 const PORT = 3000;
@@ -61,6 +61,16 @@ app.post('/addFee', async (req, res) => {
         res.status(500).send('Có lỗi xảy ra khi thêm .');
     }
 });
+app.delete('deleteFeeById/:id', async (req, res) => {
+    try {
+        const feeId = req.params.id;
+        await deleteFee(feeId);
+        res.status(200).send('Xóa thành công!');
+    } catch (error) {
+        res.status(404).send('Không tìm thấy id học phí.');
+    }
+});
+
 // app.get('/user/:id', (req, res) => {
 //     const userId = req.params.id;
 //     res.send(`User ID is: ${userId}`);

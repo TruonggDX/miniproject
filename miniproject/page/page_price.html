@@ -91,11 +91,11 @@
                         </div>
                         <div class="form-group">
                             <label>Tổng số tiền</label>
-                            <input type="text" class="form-control" name="total_amount" placeholder="Nhập tổng số tiền cần đóng">
+                            <input type="text" class="form-control" name="total" placeholder="Nhập tổng số tiền cần đóng">
                         </div>
                         <div class="form-group">
                             <label>Số đợt</label>
-                            <input type="number" class="form-control" name="installments" id="installments" placeholder="Nhập số đợt">
+                            <input type="number" class="form-control" name="number" id="number" placeholder="Nhập số đợt">
                         </div>
                         <div class="form-group">
                             <label>Hạn nộp</label>
@@ -139,7 +139,7 @@
                                   <i class="fas fa-edit"></i> Chi tiết
                                 </a>
 
-                                <button type="button" class="btn btn-danger btn-sm" data-name="${fee.name}" onclick="deleteFee(${fee.id})">
+                                <button type="button" class="btn btn-danger btn-sm" data-name="${fee.id}" onclick="deleteFee(${fee.id})">
                                     <i class="fas fa-trash-alt"></i> Xóa
                                 </button>
 
@@ -173,6 +173,25 @@
                 console.error(error);
             }
         }
+
+
+        async function deleteFee(id){
+            try {
+              const response = await fetch(`http://localhost:3000/deleteFeeById/${id}`, {
+                method: 'DELETE'
+              });
+      
+              if (response.ok) {
+                alert('Xóa thành công!');
+              } else {
+                alert('Có lỗi xảy ra khi xóa học phí.');
+              }
+            } catch (error) {
+              console.error(error);
+              alert('Có lỗi xảy ra khi xóa học phí.');
+            }
+          }
+      
     </script>
  
 </body>
